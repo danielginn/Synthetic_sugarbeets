@@ -154,7 +154,7 @@ def addPlant(img_data_bundle, new_plant_data_bundle_list, occlusion_percent=0, n
         MAX_TRIES = 20
         POINTS_ON_LINE = 20
 
-    img, lbl, col_lbl, plant_instances, bboxes, stem_mask = img_data_bundle
+    img, lbl, col_lbl, plant_instances, bboxes, stem_mask, stem_id_mask = img_data_bundle
     plant_id_mask, plant_size_mask, plant_details = plant_instances
 
     rows = np.shape(img)[0]
@@ -245,7 +245,7 @@ def addPlant(img_data_bundle, new_plant_data_bundle_list, occlusion_percent=0, n
                         plant_size_mask[ymin:ymax, xmin:xmax] = plant_size_mask[ymin:ymax,
                                                                 xmin:xmax] + radius_new * new_plant_pix_vis.astype(
                             'int')
-
+                        cv2.circle(stem_id_mask, (xmin + int(new_stem["x"]), ymin + int(new_stem["y"])), 11, new_plant_id, thickness=-1)
                         if new_plant_species > 1.5:
                             cv2.circle(stem_mask, (xmin + int(new_stem["x"]), ymin + int(new_stem["y"])), 11, [0.0,0.0,1.0], thickness=-1)
                         else:
@@ -369,6 +369,7 @@ def addPlant(img_data_bundle, new_plant_data_bundle_list, occlusion_percent=0, n
                 plant_size_mask[rand_ymin:rand_ymin + h, rand_xmin:rand_xmin + w] += (
                             new_plant_lbl_mask.astype('int') * radius_new)
 
+                cv2.circle(stem_id_mask, (rand_xmin + int(new_stem["x"]), rand_ymin + int(new_stem["y"])), new_plant_id, [0.0,0.0,1.0], thickness=-1)
                 if new_plant_species > 1.5:
                     cv2.circle(stem_mask, (rand_xmin + int(new_stem["x"]), rand_ymin + int(new_stem["y"])), 11, [0.0,0.0,1.0], thickness=-1)
                 else:
@@ -414,5 +415,5 @@ def addPlant(img_data_bundle, new_plant_data_bundle_list, occlusion_percent=0, n
         if not (foundGoodSpot):
             plant_details.pop()
 
-    img_data_bundle = (img, lbl, col_lbl, plant_instances, bboxes, stem_mask)
+    img_data_bundle = (img, lbl, col_lbl, plant_instances, bboxes, stem_mask, stem_id_mask)
     return img_data_bundle

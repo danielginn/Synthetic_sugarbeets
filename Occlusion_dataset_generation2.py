@@ -89,6 +89,7 @@ for (lbl_path, col_lbl_path, img_path, meta_path) in zip(bkgr_label_samples, bkg
     radius_mask = np.zeros([rows, cols], dtype='int')
     stem_mask = np.zeros([rows, cols, 3], dtype='int')
     stem_mask[:,:,0] = np.ones([rows, cols], dtype='int')
+    stem_id_mask = np.zeros([rows, cols], dtype='int')
     plant_details = []
 
     # Need to associate unconnected contours
@@ -111,7 +112,7 @@ for (lbl_path, col_lbl_path, img_path, meta_path) in zip(bkgr_label_samples, bkg
         plant_id = np.max(lbl[y:(y + h - 1), x:(x + w - 1)])
         plant_details.append([area, 0])
         stem_x, stem_y = my_functions.findStemForBBox(stem["x"], stem["y"], x, y, w, h)
-
+        cv2.circle(stem_id_mask, (stem_x, stem_y), 11, bboxid, thickness=-1)
         if plant_id > 1.5:
             cv2.circle(stem_mask, (stem_x, stem_y), 11, [0.0,0.0,1.0], thickness=-1)
         else:
@@ -143,7 +144,7 @@ for (lbl_path, col_lbl_path, img_path, meta_path) in zip(bkgr_label_samples, bkg
 
     # Bundle Background image files together
     plant_instances = (plant_id_mask, radius_mask, plant_details)
-    img_data_bundle = (img, lbl, col_lbl, plant_instances, bboxes, stem_mask)
+    img_data_bundle = (img, lbl, col_lbl, plant_instances, bboxes, stem_mask, stem_id_mask)
 
     # Add synthetic images
     new_plants_added = random.randint(5, 12)  # How many new plants to add
@@ -175,7 +176,9 @@ for (lbl_path, col_lbl_path, img_path, meta_path) in zip(bkgr_label_samples, bkg
     plant_instances = img_data_bundle[3]
     bboxes = img_data_bundle[4]
     stem_mask = img_data_bundle[5]
+    stem_id_mask = img_data_bundle[6]
     plant_id_mask = plant_instances[0]
+
 
     background_count += 1
     dst_folder = ".\\data\\occlusion_50\\"
@@ -185,6 +188,7 @@ for (lbl_path, col_lbl_path, img_path, meta_path) in zip(bkgr_label_samples, bkg
         cv2.imwrite(dst_folder + "color_label\\" + str(background_count).zfill(4) + ".png", col_lbl)
         cv2.imwrite(dst_folder + "instance_mask\\" + str(background_count).zfill(4) + ".png", plant_id_mask)
         cv2.imwrite(dst_folder + "stem_mask\\" + str(background_count).zfill(4) + ".png", stem_mask)
+        cv2.imwrite(dst_folder + "stem_id_mask\\" + str(background_count).zfill(4) + ".png", stem_id_mask)
         out_file = open(dst_folder + "meta\\" + str(background_count).zfill(4) + ".json", "w")
         json.dump(bboxes, out_file, indent=4)
         out_file.close()
