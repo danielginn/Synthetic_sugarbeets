@@ -369,7 +369,8 @@ def addPlant(img_data_bundle, new_plant_data_bundle_list, occlusion_percent=0, n
                 plant_size_mask[rand_ymin:rand_ymin + h, rand_xmin:rand_xmin + w] += (
                             new_plant_lbl_mask.astype('int') * radius_new)
 
-                cv2.circle(stem_id_mask, (rand_xmin + int(new_stem["x"]), rand_ymin + int(new_stem["y"])), new_plant_id, [0.0,0.0,1.0], thickness=-1)
+                cv2.circle(stem_id_mask, (rand_xmin + int(new_stem["x"]), rand_ymin + int(new_stem["y"])), 11, new_plant_id,
+                           thickness=-1)
                 if new_plant_species > 1.5:
                     cv2.circle(stem_mask, (rand_xmin + int(new_stem["x"]), rand_ymin + int(new_stem["y"])), 11, [0.0,0.0,1.0], thickness=-1)
                 else:
