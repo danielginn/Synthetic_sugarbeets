@@ -16,12 +16,13 @@ plant_names = ["Sugarbeat","Capsella","Galium"]
 
 # Load in backgrounds
 SAVE_IMAGES = True
-OCCLUSION_PERCENT = 0.50
+OCCLUSION_PERCENT = 0.0
 if OCCLUSION_PERCENT < 0.01:
     NEW_LOCATION_CHANCE = 1.0
 else:
     NEW_LOCATION_CHANCE = 0.2
 data_dir = '.\\data\\backgrounds_cleaned\\'
+dst_folder = ".\\data\\occlusion_00\\"
 bkgr_image_filepaths, bkgr_label_filepaths, bkgr_color_filepaths, bkgr_meta_filepaths = my_modules.import_filepaths(
     "png", "png", "json", data_dir)
 bkgr_image_filepaths = bkgr_image_filepaths + bkgr_image_filepaths
@@ -181,7 +182,7 @@ for (lbl_path, col_lbl_path, img_path, meta_path) in zip(bkgr_label_samples, bkg
 
 
     background_count += 1
-    dst_folder = ".\\data\\occlusion_50\\"
+
     if SAVE_IMAGES == True:
         cv2.imwrite(dst_folder + "rgb\\" + str(background_count).zfill(4) + ".png", img)
         cv2.imwrite(dst_folder + "label\\" + str(background_count).zfill(4) + ".png", lbl)
